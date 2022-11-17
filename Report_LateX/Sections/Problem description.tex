@@ -1,0 +1,22 @@
+\section{Problem Description}
+
+The input consists of a set of 40 instances in a text format, each one containing the following data:
+
+\begin{itemize}
+    \item width of the silicon plate $w$
+    \item number of circuits to place $n$
+    \item horizontal dimension $x_i$ of the i-th circuit (for each circuit i from 1..n)
+    \item vertical dimension $y_i$ of the i-th circuit (for each circuit i from 1..n)
+\end{itemize}\
+
+The output, instead, will be structured in the following way:
+
+$ w \quad h \\
+n \\
+x_0\quad y_0\quad \hat{x_0}\quad \hat{y_0} \\
+x_1\quad y_0\quad \hat{x_1}\quad \hat{y_1} \\
+. . . \\
+x_n\quad y_n\quad \hat{x_n}\quad \hat{y_n} \\
+$
+
+where $h$ is the maximum height reached by the circuits configuration; $x_i$ and $y_i$ are respectively the horizontal and vertical dimensions of the i-th circuit; $\hat{x_i}$ and $\hat{y_i}$ are the coordinates of the left-bottom corner for the i-th circuit.

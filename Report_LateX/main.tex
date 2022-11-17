@@ -1,0 +1,44 @@
+% Author - Jon Arnt Kårstad, NTNU IMT
+\documentclass{article}
+
+% Importing document settings from our file "packages.sty"
+\usepackage{packages}
+\usepackage{url}
+\usepackage{longtable}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{amsmath}
+
+% Beginning of document
+\begin{document}
+
+% Inserting title page
+\import{./}{title}
+
+% Defining front matter settings (Norsk: innstillinger for forord m.m.)
+\frontmatter
+
+% Inserting table of contents
+\tableofcontents
+
+\pagenumbering{arabic}
+
+% Introduction explaining this LaTeX-template
+\import{./Sections/}{Introduction}
+
+\import{./Sections/}{Problem description}
+
+\import{./Sections/}{CP Modeling}
+
+\import{./Sections/}{SMT}
+
+\import{./Sections/}{Conclusion}
+
+\import{./Sections/}{References}
+
+% Printing bibliography
+\newpage
+\printbibliography[heading = bibintoc, title = Bibliography]    % 'bibintoc' inserts our bibliography into the table of contents
+
+% End of document
+\end{document}
