@@ -11,61 +11,56 @@ int: n; % number of circuits
 set of int: CIRCUITS = 1..n;
 
 % array of circuits widths
-array[CIRCUITS] of int: x_sizes;
+array[CIRCUITS] of int: x_dim;
 % array of circuits heights
-array[CIRCUITS] of int: y_sizes;
-
-% Other variables
-
-% Plate bounds
-int: lowb = max(y_sizes); % lower bound (max circuit height)
-int: upb = sum(y_sizes); % upper bound (sum of circuits heights)
+array[CIRCUITS] of int: y_dim;
 
 % Output variables
 
 % Horizontal coordinate of circuits
 array[CIRCUITS] of var 0..width-1: x;
 % Vertical coordinate of circuits
-array[CIRCUITS] of var 0..sum(y_sizes)-1: y;
+array[CIRCUITS] of var 0..sum(y_dim)-1: y;
+
+% Plate bounds
+int: lowb = max(y_dim); % lower bound (max circuit height)
+int: upb = sum(y_dim); % upper bound (sum of circuits heights)
 
 % Height of plate that ranges from lower to upper bound, to minimize
 var lowb..upb: height;
-height = max([y[i] + y_sizes[i] | i in CIRCUITS]);
+height = max([y[i] + y_dim[i] | i in CIRCUITS]);
 
 % Domain reduction
-constraint forall(i in CIRCUITS) (x[i] <= width - x_sizes[i])::domain;
-constraint forall(i in CIRCUITS) (y[i] <= height - y_sizes[i])::domain;
+constraint forall(i in CIRCUITS) (x[i] <= width - x_dim[i])::domain;
+constraint forall(i in CIRCUITS) (y[i] <= height - y_dim[i])::domain;
 
 % Constraints
 
 % max width
-constraint max([x[i] + x_sizes[i] | i in CIRCUITS]) <= width;
+constraint max([x[i] + x_dim[i] | i in CIRCUITS]) <= width;
 
 % max height
-constraint max([y[i] + y_sizes[i] | i in CIRCUITS]) <= upb;
+constraint max([y[i] + y_dim[i] | i in CIRCUITS]) <= upb;
 
 % Global constraints
 
-% Cumulative constraint: circuits as activities with d=height and r=width
-constraint cumulative(y, y_sizes, x_sizes, width);
-constraint cumulative(x, x_sizes, y_sizes, height);
+% Cumulative constraint: circuits as activities with duration and resources
+constraint cumulative(y, y_dim, x_dim, width);
+constraint cumulative(x, x_dim, y_dim, height);
 
 % Non-overlapping circuits
-constraint diffn(x, y, x_sizes, y_sizes);
+constraint diffn(x, y, x_dim, y_dim);
 
 % Symmetry breaking constraints
 
 % Ordered circuits wrt their area
-array[CIRCUITS] of int: area = [-x_sizes[i] * y_sizes[i] | i in CIRCUITS];
+array[CIRCUITS] of int: area = [-x_dim[i] * y_dim[i] | i in CIRCUITS];
 array[CIRCUITS] of int : ord_circ = sort_by(CIRCUITS, area);
 
 % Largest rectangle is placed on the lower left wrt the second largest
 constraint symmetry_breaking_constraint(
-    let {
-        int: c1 = ord_circ[1], int: c2 = ord_circ[2]
-    } in lex_lesseq([y[c1],x[c1]], [y[c2],x[c2]])
+    x[ord_circ[1]] == 0 /\ y[ord_circ[1]] == 0
 );
-
 
 % Search
 
@@ -84,7 +79,6 @@ ann: search_ann =
 
 % Restart type
 
-
 ann: restart_ann =
   if restart_strat == 1 
     then restart_constant(750)
@@ -101,6 +95,6 @@ solve :: search_ann
       minimize height;
 
 output ["\(width) \(height)\n\(n)\n"]
-       ++ ["\(x_sizes[i]) \(y_sizes[i]) \(x[i]) \(y[i])"
+       ++ ["\(x_dim[i]) \(y_dim[i]) \(x[i]) \(y[i])"
        ++ "\n"
       | i in 1..n];

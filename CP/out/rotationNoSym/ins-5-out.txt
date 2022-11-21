@@ -1,0 +1,13 @@
+12 12
+8
+3 3 9 6
+3 4 8 9 rotated
+3 5 7 3 rotated
+3 6 0 0 rotated
+3 7 0 3 rotated
+3 8 0 9 rotated
+3 9 0 6 rotated
+6 3 6 0
+----------
+==========
+2.2549

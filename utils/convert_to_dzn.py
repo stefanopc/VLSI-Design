@@ -4,24 +4,27 @@ import re
 # Open each instance in a .txt file and read the data
 def read_instance(f):
     file = open(f, "r")
+    # extract plate width
     width = int(file.readline())
-    n_circuits  = int(file.readline())
-    x_sizes = []
-    y_sizes = []
+    # extract number of circuits
+    n_circuits = int(file.readline())
+    x_dim = []
+    y_dim = []
+    # extract x and y circuits dimensions
     for i in range(n_circuits):
         circ_dim = file.readline()
         circ_dim_split = circ_dim.strip().split(" ")
-        x_sizes.append(int(circ_dim_split[0]))
-        y_sizes.append(int(circ_dim_split[1]))
-    return width, n_circuits, x_sizes, y_sizes
+        x_dim.append(int(circ_dim_split[0]))
+        y_dim.append(int(circ_dim_split[1]))
+    return width, n_circuits, x_dim, y_dim
 
 # Write the data of each instance into a .dzn file
-def write_instance(width, n_circuits, x_sizes, y_sizes, out_path="./file.dzn"):
+def write_instance(width, n_circuits, x_dim, y_dim, out_path=None):
     file = open(out_path, mode="w")
     file.write(f"width = {width};\n")
     file.write(f"n = {n_circuits};\n")
-    file.write(f"x_sizes = {x_sizes};\n")
-    file.write(f"y_sizes = {y_sizes};")
+    file.write(f"x_dim = {x_dim};\n")
+    file.write(f"y_dim = {y_dim};")
     file.close()
 
 
@@ -32,9 +35,9 @@ if __name__ == "__main__":
     files = os.listdir(in_path)
 
     list_instances = []
-    for f in files:
-        obj = re.search("^ins-[0-9]+.txt", f)
+    for f_in in files:
+        obj = re.search("^ins-[0-9]+.txt", f_in)
         if obj is not None:
-            width, n_circuits, x_sizes, y_sizes = read_instance(in_path + f)
-            f2 = f.replace(".txt", ".dzn")
-            write_instance(width, n_circuits, x_sizes, y_sizes, out_path + f2)
+            width, n_circuits, x_dim, y_dim = read_instance(in_path + f_in)
+            f_out = f_in.replace(".txt", ".dzn")
+            write_instance(width, n_circuits, x_dim, y_dim, out_path + f_out)

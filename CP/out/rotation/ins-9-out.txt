@@ -1,15 +1,15 @@
 16 16
 10
-3 3 7 13
-3 4 0 10 rotated
-3 5 0 7 rotated
+3 3 13 10
+3 4 12 7 rotated
+3 5 8 10 rotated
 3 6 10 13 rotated
-3 7 0 13 rotated
-3 8 5 7 rotated
-3 10 13 0
-3 12 4 10 rotated
-4 7 9 0
+3 7 9 4 rotated
+3 8 0 10 rotated
+3 10 0 13 rotated
+3 12 0 7 rotated
+4 7 9 0 rotated
 7 9 0 0 rotated
 ----------
 ==========
-7.9085
+19.2641

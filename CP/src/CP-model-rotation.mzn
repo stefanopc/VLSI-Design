@@ -11,79 +11,72 @@ int: n; % number of circuits
 set of int: CIRCUITS = 1..n;
 
 % array of circuits widths
-array[CIRCUITS] of int: x_sizes;
+array[CIRCUITS] of int: x_dim;
 % array of circuits heights
-array[CIRCUITS] of int: y_sizes;
-
-% Other variables
-
-% Plate bounds
-int: lowb = max(y_sizes + x_sizes);
-int: upb = sum([max(y_sizes[i], x_sizes[i]) | i in CIRCUITS]);
+array[CIRCUITS] of int: y_dim;
 
 % Boolean array to model rotation of the circuits
 array[CIRCUITS] of var bool: rotation;
 
 % Actual horizontal dimension of circuits
-array[CIRCUITS] of var int: x_sizes_rot = [if rotation[i] then y_sizes[i] else x_sizes[i] endif | i in CIRCUITS];
+array[CIRCUITS] of var int: x_dim_rot = [if rotation[i] then y_dim[i] else x_dim[i] endif | i in CIRCUITS];
 
 % Actual vertical dimension of the circuits
-array[CIRCUITS] of var int: y_sizes_rot = [if rotation[i] then x_sizes[i] else y_sizes[i] endif | i in CIRCUITS];
+array[CIRCUITS] of var int: y_dim_rot = [if rotation[i] then x_dim[i] else y_dim[i] endif | i in CIRCUITS];
 
 % Output variables
 
 % Horizontal coordinate of circuits
 array[CIRCUITS] of var 0..width-1: x;
 % Vertical coordinate of circuits
-array[CIRCUITS] of var 0..sum(y_sizes)-1: y;
+array[CIRCUITS] of var 0..sum(y_dim)-1: y;
+
+% Plate bounds
+int: lowb = max(y_dim ++ x_dim);
+int: upb = sum([max(y_dim[i], x_dim[i]) | i in CIRCUITS]);
 
 % Height of plate that ranges from lower to upper bound, to minimize
 var lowb..upb: height;
-height = max([y[i] + y_sizes_rot[i] | i in CIRCUITS]);
+height = max([y[i] + y_dim_rot[i] | i in CIRCUITS]);
 
 % Domain reduction
-constraint forall(i in CIRCUITS) (x[i] <= width - x_sizes_rot[i])::domain;
-constraint forall(i in CIRCUITS) (y[i] <= height - y_sizes_rot[i])::domain;
-
+constraint forall(i in CIRCUITS) (x[i] <= width - x_dim_rot[i])::domain;
+constraint forall(i in CIRCUITS) (y[i] <= height - y_dim_rot[i])::domain;
 
 % Constraints
 
 % max width
-constraint max([x[i] + x_sizes_rot[i] | i in CIRCUITS]) <= width;
-
+constraint max([x[i] + x_dim_rot[i] | i in CIRCUITS]) <= width;
 % max height
-constraint max([y[i] + y_sizes_rot[i] | i in CIRCUITS]) <= upb;
+constraint max([y[i] + y_dim_rot[i] | i in CIRCUITS]) <= upb;
 
 % A circuit cannot be rotated if its height is greater than plate width
-constraint forall(i in CIRCUITS)(y_sizes[i] > width -> rotation[i]==false);
+constraint forall(i in CIRCUITS)(y_dim[i] > width -> rotation[i]==false);
 
 % Global constraints
 
-% Cumulative constraint: circuits as activities with d=height and r=width
-constraint cumulative(y, y_sizes_rot, x_sizes_rot, width);
-constraint cumulative(x, x_sizes_rot, y_sizes_rot, height);
+% Cumulative constraint: circuits as activities with duration and resources
+constraint cumulative(y, y_dim_rot, x_dim_rot, width);
+constraint cumulative(x, x_dim_rot, y_dim_rot, height);
 
 % Non-overlapping circuits
-constraint diffn(x, y, x_sizes_rot, y_sizes_rot);
+constraint diffn(x, y, x_dim_rot, y_dim_rot);
 
 % Symmetry breaking constraints
 
 % Circuits which have dimensions that are the same should not be rotated
 constraint symmetry_breaking_constraint(
-  forall (i in CIRCUITS) (x_sizes[i] = y_sizes[i] -> rotation[i] = 0)
+  forall (i in CIRCUITS) (x_dim[i] = y_dim[i] -> rotation[i] = 0)
 );
 
 % Ordered circuits wrt their area
-array[CIRCUITS] of int: area = [-x_sizes[i] * y_sizes[i] | i in CIRCUITS];
+array[CIRCUITS] of int: area = [-x_dim[i] * y_dim[i] | i in CIRCUITS];
 array[CIRCUITS] of int : ord_circ = sort_by(CIRCUITS, area);
 
 % Largest rectangle is placed on the lower left wrt the second largest
 constraint symmetry_breaking_constraint(
-    let {
-        int: c1 = ord_circ[1], int: c2 = ord_circ[2]
-    } in lex_less([y[c1],x[c1]], [y[c2],x[c2]])
+    x[ord_circ[1]] == 0 /\ y[ord_circ[1]] == 0
 );
-
 
 % Search
 
@@ -117,7 +110,7 @@ solve :: search_ann
       minimize height;
 
 output ["\(width) \(height)\n\(n)\n"]
-       ++ ["\(x_sizes[i]) \(y_sizes[i]) \(x[i]) \(y[i])"
+       ++ ["\(x_dim[i]) \(y_dim[i]) \(x[i]) \(y[i])"
        ++ if fix(rotation[i]) then " rotated" else "" endif
        ++ "\n"
       | i in 1..n];
