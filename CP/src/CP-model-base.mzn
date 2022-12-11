@@ -26,7 +26,7 @@ array[CIRCUITS] of var 0..sum(y_dim)-1: y;
 int: lowb = max(y_dim); % lower bound (max circuit height)
 int: upb = sum(y_dim); % upper bound (sum of circuits heights)
 
-% Height of plate that ranges from lower to upper bound, to minimize
+% Height of plate ranges from lower to upper bound, to minimize
 var lowb..upb: height;
 height = max([y[i] + y_dim[i] | i in CIRCUITS]);
 
@@ -38,7 +38,6 @@ constraint forall(i in CIRCUITS) (y[i] <= height - y_dim[i])::domain;
 
 % max width
 constraint max([x[i] + x_dim[i] | i in CIRCUITS]) <= width;
-
 % max height
 constraint max([y[i] + y_dim[i] | i in CIRCUITS]) <= upb;
 
@@ -52,19 +51,18 @@ constraint cumulative(x, x_dim, y_dim, height);
 constraint diffn(x, y, x_dim, y_dim);
 
 % Symmetry breaking constraints
-
 % Ordered circuits wrt their area
 array[CIRCUITS] of int: area = [-x_dim[i] * y_dim[i] | i in CIRCUITS];
 array[CIRCUITS] of int : ord_circ = sort_by(CIRCUITS, area);
 
-% Largest rectangle is placed on the lower left wrt the second largest
+% Largest rectangle is placed in the bottom left corner
 constraint symmetry_breaking_constraint(
     x[ord_circ[1]] == 0 /\ y[ord_circ[1]] == 0
 );
 
 % Search
 
-% Variables to control search heuristics and restart strategies
+% Parameters to control search heuristics and restart strategies
 int: search_heur = 1;
 int: restart_strat = 3;
 
@@ -78,7 +76,6 @@ ann: search_ann =
   endif;
 
 % Restart type
-
 ann: restart_ann =
   if restart_strat == 1 
     then restart_constant(750)

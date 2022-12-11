@@ -1,0 +1,68 @@
+\section{Conclusion}
+
+VLSI design turned out to be a problem of non-negligible complexity: the goal was to find a good model through a combination of constraints and types of search in order to get the most efficient solution with as smaller solving times as possible. \\
+In both cases with CP and SMT we were able to get satisfactory results, in particular in the base model that does not allow rotation, which inevitably adds complexity. In particular, among the two techniques, CP managed to obtain the best results by solving a larger number of instances. In all the cases, as the number of circuits in the plate increases, the complexity raises and the solver may not be able to find a solution within the time limit of 300 seconds.
+
+To sum up, in Table 3 we report a table with the final plate's height found for each instance by each technology (CP and SMT) and the total number of solved instances:
+
+\begin{center}
+\begin{longtable}{|l|l|l|}
+\caption{Height found by CP and SMT for each instance and total number of solved instances} \label{tab:long} \\
+
+\hline \multicolumn{1}{|c|}{\textbf{Instance}} & \multicolumn{1}{c|}{\textbf{CP}} & \multicolumn{1}{c|}{\textbf{SMT}} \\ \hline 
+\endfirsthead
+
+\multicolumn{3}{c}%
+{{\bfseries \tablename\ \thetable{} -- continued from previous page}} \\
+\hline \multicolumn{1}{|c|}{\textbf{Instance}} & \multicolumn{1}{c|}{\textbf{CP}} & \multicolumn{1}{c|}{\textbf{SMT}} \\ \hline 
+\endhead
+
+\hline \multicolumn{3}{|r|}{{Continued on next page}} \\ \hline
+\endfoot
+
+\hline \hline
+\endlastfoot
+
+1 & 8 & 8  \\
+2 & 9 & 9  \\
+3 & 10 & 10  \\
+4 & 11 & 11  \\
+5 & 12 & 12  \\
+6 & 13 & 13  \\
+7 & 14 & 14  \\
+8 & 15 & 15  \\
+9 & 16 & 16  \\
+10 & 17 & 17  \\
+11 & - & - \\
+12 & 19 & 19  \\
+13 & 20 & 20  \\
+14 & 21 & 21  \\
+15 & 22 & 22  \\
+16 & 23 & - \\
+17 & 24 & 24  \\
+18 & 25 & 25 \\
+19 & - & - \\
+20 & 27 & 27 \\
+21 & 28 & - \\
+22 & - & - \\
+23 & 30 & 30 \\
+24 & 31 & 31 \\
+25 & - & - \\
+26 & 33 & 33 \\
+27 & 34 & 34 \\
+28 & 35 & 35 \\
+29 & 36 & 36 \\
+30 & - & - \\
+31 & 38 & 38 \\
+32 & - & - \\
+33 & 40 & 40 \\
+34 & - & - \\
+35 & - & - \\
+36 & 40 & - \\
+37..40 & - & - \\
+\hline
+\textbf{Total (base)} & 28 & 25 \\ 
+\textbf{Total (rotation)} & 18 & 17 \\
+
+\end{longtable}
+\end{center}

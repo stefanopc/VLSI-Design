@@ -1,0 +1,39 @@
+\section{Introduction}
+
+VLSI (Very Large Scale Integration) refers to the trend of integrating circuits into silicon chips.
+Given a fixed-width plate and a list of rectangular circuits, the problem consists in deciding how to place the circuits on the plate in order to minimize the length of the final device. 
+
+The combinatorial optimization problem will be modeled and solved using two approaches: Constraint Programming (CP) using MiniZinc and Satisfiability Modulo Theories (SMT) using Z3Py. In both cases, in addition to a base model, it will be developed a model which takes into account the rotation of the circuits, in order to see which modifications should be applied. Finally, the obtained results will be compared to assess the performances of the solvers using different models.
+
+\hfill
+
+The \textbf{input} consists of a set of 40 instances in a text format, each one containing the following data:
+\begin{itemize}
+    \item width of the silicon plate $w$
+    \item number of circuits to place $n$
+    \item horizontal dimension $x_i$ of the i-th circuit, $\forall i \in \{1..n\}$
+    \item vertical dimension $y_i$ of the i-th circuit, $\forall i \in \{1..n\}$
+\end{itemize}\
+
+The output, instead, will be structured in the following way:
+
+$ w \quad h \\
+n \\
+x_0\quad y_0\quad \hat{x_0}\quad \hat{y_0} \\
+x_1\quad y_0\quad \hat{x_1}\quad \hat{y_1} \\
+. . . \\
+x_n\quad y_n\quad \hat{x_n}\quad \hat{y_n} \\
+$
+
+where $w$, $n$, $x_i$ and $y_i$ are the same as previously described; $h$ is the maximum height reached by the circuits configuration; $\hat{x_i}$ and $\hat{y_i}$ are the coordinates of the left-bottom corner of the i-th circuit, $\forall i \in {1..n}$. The objective variable is the final plate's \textit{height} and the goal is to minimize it.
+
+Therefore, in the various models that will be described, the variables used to formalize the problem are the following:
+
+\begin{itemize}
+    \item $width$ is the fixed plate width
+    \item $n$ is the number of circuits to place in the plate
+    \item $x\_dim$ and $y\_dim$ are two arrays (indexed from 1..n) representing the horizontal and vertical dimensions of the circuits, respectively
+    \item $x$ and $y$ are two arrays (indexed from 1..n) representing the horizontal and vertical coordinates, respectively, of the bottom-left coordinate of the circuits
+\end{itemize}\
+
+\newpage

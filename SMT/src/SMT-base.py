@@ -14,12 +14,12 @@ def solve_instance(input_file, output_dir):
     # Get values from input instance file
     width, n_circuits, x_dim, y_dim = read_instance(input_file)
 
-    # Vector of the circuits x and y coordinates
+    # Vector of circuits' x and y coordinates
     x = IntVector('x', n_circuits)
     y = IntVector('y', n_circuits)
 
     # Objective variable: maximum plate height to minimize
-    height = max_z3([y[i] + y_dim[i] for i in range(n_circuits)])
+    height = maxVal([y[i] + y_dim[i] for i in range(n_circuits)])
 
     # Set the optimizer with objective function
     opt = Optimize()
@@ -44,25 +44,25 @@ def solve_instance(input_file, output_dir):
     opt.add(dom_x + dom_y + no_overlap)
 
     # Cumulative constraints
-    cumulative_x = cumulative_z3(x, x_dim, y_dim, sum(y_dim))
-    cumulative_y = cumulative_z3(y, y_dim, x_dim, width)
+    cumulative_x = cumulative(x, x_dim, y_dim, sum(y_dim))
+    cumulative_y = cumulative(y, y_dim, x_dim, width)
     opt.add(cumulative_x + cumulative_y)
 
     # Boundaries constraints
-    max_width = [max_z3([x[i] + x_dim[i] for i in range(n_circuits)]) <= width]
-    max_height = [max_z3([y[i] + y_dim[i] for i in range(n_circuits)]) <= sum(y_dim)]
+    max_width = [maxVal([x[i] + x_dim[i] for i in range(n_circuits)]) <= width]
+    max_height = [maxVal([y[i] + y_dim[i] for i in range(n_circuits)]) <= sum(y_dim)]
     opt.add(max_width + max_height)
 
 
     # Symmetry breaking constraints
 
-    '''areas_index = np.argsort([x_dim[i] * y_dim[i] for i in range(n_circuits)])
+    areas_index = np.argsort([x_dim[i] * y_dim[i] for i in range(n_circuits)])
     biggest_circuit = areas_index[-1]
 
     # Impose that the biggest circuit is placed at the bottom left (at coordinates (0,0))
     sym_biggest_bottom_left = And(x[biggest_circuit] == 0,
                                   y[biggest_circuit] == 0)
-    opt.add(sym_biggest_bottom_left)'''
+    opt.add(sym_biggest_bottom_left)
 
     # Maximum time of execution is 300 seconds, otherwise the solving process is aborted
     opt.set("timeout", 300000)

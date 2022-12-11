@@ -35,7 +35,7 @@ array[CIRCUITS] of var 0..sum(y_dim)-1: y;
 int: lowb = max(y_dim ++ x_dim);
 int: upb = sum([max(y_dim[i], x_dim[i]) | i in CIRCUITS]);
 
-% Height of plate that ranges from lower to upper bound, to minimize
+% Height of plate ranges from lower to upper bound, to minimize
 var lowb..upb: height;
 height = max([y[i] + y_dim_rot[i] | i in CIRCUITS]);
 
@@ -62,25 +62,25 @@ constraint cumulative(x, x_dim_rot, y_dim_rot, height);
 % Non-overlapping circuits
 constraint diffn(x, y, x_dim_rot, y_dim_rot);
 
-% Symmetry breaking constraints
-
-% Circuits which have dimensions that are the same should not be rotated
+% Circuits with same dimensions are not rotated
 constraint symmetry_breaking_constraint(
   forall (i in CIRCUITS) (x_dim[i] = y_dim[i] -> rotation[i] = 0)
 );
+
+% Symmetry breaking constraints
 
 % Ordered circuits wrt their area
 array[CIRCUITS] of int: area = [-x_dim[i] * y_dim[i] | i in CIRCUITS];
 array[CIRCUITS] of int : ord_circ = sort_by(CIRCUITS, area);
 
-% Largest rectangle is placed on the lower left wrt the second largest
+% Largest rectangle is placed in the bottom left corner
 constraint symmetry_breaking_constraint(
     x[ord_circ[1]] == 0 /\ y[ord_circ[1]] == 0
 );
 
 % Search
 
-% Variables to control search heuristics and restart strategies
+% Parameters to control search heuristics and restart strategies
 int: search_heur = 1;
 int: restart_strat = 3;
 

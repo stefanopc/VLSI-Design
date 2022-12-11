@@ -29,7 +29,7 @@ def solve_instance(model, in_file, out_dir):
 def main():
     in_dir = "../in"
     model = "CP-model-base.mzn"  # base or rotation model
-    out_dir = "../out/base-3-domwdeg"
+    out_dir = "../out/base"
     for in_file in natsorted(glob((os.path.join(in_dir, '*.dzn')))):
         solve_instance(model, in_file, out_dir)
 

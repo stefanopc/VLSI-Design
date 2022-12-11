@@ -17,14 +17,14 @@ def solve_instance(in_file, out_dir):
     x = IntVector('x', n_circuits)
     y = IntVector('y', n_circuits)
 
-    # rotation array
+    # Rotation array
     rotation = BoolVector('rot', n_circuits)
     # actual dimensions of circuits considering rotation
     x_dim_rot = [If(And(x_dim[i] != y_dim[i], rotation[i]), y_dim[i], x_dim[i]) for i in range(n_circuits)]
     y_dim_rot = [If(And(x_dim[i] != y_dim[i], rotation[i]), x_dim[i], y_dim[i]) for i in range(n_circuits)]
 
     # Objective variable: maximum plate height to minimize
-    height = max_z3([y[i] + y_dim[i] for i in range(n_circuits)])
+    height = maxVal([y[i] + y_dim[i] for i in range(n_circuits)])
 
     # Set the optimizer with objective function
     opt = Optimize()
@@ -46,24 +46,24 @@ def solve_instance(in_file, out_dir):
                                  y[j]+y_dim_rot[j] <= y[i]))
 
         # If a circuit is squared it is forced not to be rotated
-        opt.add(If(x_dim[i]==y_dim[i],
-                   And(x_dim[i]==x_dim_rot[i],
-                       y_dim[i]==y_dim_rot[i]),
-                   Or(And(x_dim[i]==x_dim_rot[i],
-                          y_dim[i]==y_dim_rot[i]),
-                      And(x_dim_rot[i]==y_dim[i],
-                          y_dim_rot[i]==x_dim[i]))))
+        opt.add(If(x_dim[i] == y_dim[i],
+                   And(x_dim[i] == x_dim_rot[i],
+                       y_dim[i] == y_dim_rot[i]),
+                   Or(And(x_dim[i] == x_dim_rot[i],
+                          y_dim[i] == y_dim_rot[i]),
+                      And(x_dim_rot[i] == y_dim[i],
+                          y_dim_rot[i] == x_dim[i]))))
 
     opt.add(domain_x + domain_y + no_overlap)
 
     # Cumulative constraints
-    cumulative_y = cumulative_z3(y, y_dim_rot, x_dim_rot, width)
-    cumulative_x = cumulative_z3(x, x_dim_rot, y_dim_rot, sum(y_dim_rot))
+    cumulative_y = cumulative(y, y_dim_rot, x_dim_rot, width)
+    cumulative_x = cumulative(x, x_dim_rot, y_dim_rot, sum(y_dim_rot))
     opt.add(cumulative_x + cumulative_y)
 
     # Boundaries constraints
-    max_width = [max_z3([x[i] + x_dim_rot[i] for i in range(n_circuits)]) <= width]
-    max_height = [max_z3([y[i] + y_dim_rot[i] for i in range(n_circuits)]) <= sum(y_dim_rot)]
+    max_width = [maxVal([x[i] + x_dim_rot[i] for i in range(n_circuits)]) <= width]
+    max_height = [maxVal([y[i] + y_dim_rot[i] for i in range(n_circuits)]) <= sum(y_dim_rot)]
     opt.add(max_width + max_height)
 
     # Symmetry breaking constraints
@@ -127,8 +127,8 @@ def output_solution(width, n_circuits, x_dim, y_dim, x_sol, y_sol, rot_sol, heig
 
 def main():
     # Input instances and output directories
-    in_dir = "../../instancesMOD"
-    out_dir = "../out/rotation2"
+    in_dir = "../../instances"
+    out_dir = "../out/rotation"
     for in_file in natsorted(glob((os.path.join(in_dir, '*.txt')))):
         solve_instance(in_file, out_dir)
 

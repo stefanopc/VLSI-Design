@@ -20,14 +20,14 @@ def read_instance(instance):
 # Z3 utilities
 
 # Find maximum of a vector in Z3
-def max_z3(vector):
+def maxVal(vector):
     maximum = vector[0]
     for value in vector[1:]:
         maximum = If(value > maximum, value, maximum)
     return maximum 
 
-# Cumulative constraint in Z3
-def cumulative_z3(start, duration, resources, total):
+# Cumulative constraint in Z3 as in MiniZinc
+def cumulative(start, duration, resources, total):
     cumulative = []
     for u in resources:
         cumulative.append(
