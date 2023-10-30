@@ -1,6 +1,6 @@
 # VLSI Design
 
-Project work for the Combinatorial Decision Making and Optimization course.
+Combinatorial Decision Making and Optimization project work
 
 ## Introduction
 
